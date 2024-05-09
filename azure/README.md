@@ -1,4 +1,5 @@
 # General
+Before running either of these scripts, run `az login` and login to your Azure account.
 
 ## setup_aks_cluster.sh
 This script will:
