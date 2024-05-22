@@ -106,6 +106,9 @@ az network vnet create \
 # Get customer vnet ID
 GetVnetID=$(az network vnet list --query "[?name=='${CUSTOMER_VNET_NAME}'].id" -o tsv)
 
+# Get customer subnet ID
+GetSubnetID=$(az network vnet subnet show --vnet-name ${CUSTOMER_VNET_NAME} --name ${CUSTOMER_VNET_SUBNET1} --resource-group ${CUSTOMER_RG_NAME} --query id --output tsv)
+
 ${HYPERSHIFT_BINARY_PATH}/hypershift create cluster azure \
 --name $CLUSTER_NAME \
 --azure-creds $AZURE_CREDS \
@@ -118,6 +121,8 @@ ${HYPERSHIFT_BINARY_PATH}/hypershift create cluster azure \
 --external-dns-domain ${MGMT_DNS_ZONE_NAME} \
 --resource-group-name ${MANAGED_RG_NAME} \
 --vnet-id "${GetVnetID}" \
+--subnet-id "${GetSubnetID}" \
+--network-security-group-id "${GetNsgID}" \
 --annotations hypershift.openshift.io/pod-security-admission-label-override=baseline \
 --control-plane-operator-image=${CUSTOM_HYPERSHIFT_IMAGE} \
 --annotations hypershift.openshift.io/certified-operators-catalog-image=registry.redhat.io/redhat/certified-operator-index@sha256:fc68a3445d274af8d3e7d27667ad3c1e085c228b46b7537beaad3d470257be3e \
